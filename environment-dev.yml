@@ -11,7 +11,7 @@ dependencies:
   - scikit-image
   - toml
   - lume-impact
-  - distgen
+  - distgen=0.6.11
   - pip
   - pip:
 #    - git+https://github.com/christophermayes/lume-impact
