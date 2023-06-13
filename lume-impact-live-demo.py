@@ -74,27 +74,7 @@ code_directory = '/sdf/group/ard/thakur12/lume-impact-live-demo/'
 
 MODEL = 'sc_inj'
 
-import os
-os.chdir(code_directory)
-print('Code Directory Set to - ', code_directory)
-os.environ["SCRATCH"] = '/scratch/t/thakur12'
-os.environ["LCLS_LATTICE"] = '/sdf/group/ard/thakur12/lcls-lattice'
-
-config = toml.load("configs/sdf_sc_inj.toml")
-
-
-# In[ ]:
-
-
-PREFIX = f'lume-impact-live-demo-{MODEL}'
-
-
-# # Logging
-
-# In[ ]:
-
-
-import logging
+import os, logging
 
 # Gets or creates a logger
 logger = logging.getLogger(PREFIX)  
@@ -115,10 +95,23 @@ file_handler.setFormatter(formatter)
 # add file handler to logger
 logger.addHandler(file_handler)
 
+os.environ["SCRATCH"] = '/scratch/t/thakur12'
+os.environ["LCLS_LATTICE"] = '/sdf/group/ard/thakur12/lcls-lattice'
+os.chdir(code_directory)
+config = toml.load("configs/sdf_sc_inj.toml")
+
+
+# In[ ]:
+
+
+PREFIX = f'lume-impact-live-demo-{MODEL}'
+
 
 # ## Utils
 
 # In[ ]:
+
+logger.info('Starting Lume-Live Service...')
 
 
 # Saving and loading
@@ -623,9 +616,9 @@ def run1():
 
 if __name__ == '__main__':
     while True:
-        try:
-            run1()
-        except:
-            sleep(10)
-            logger.info('Something BAD happened. Sleeping for 10 s ...')
+        #try:
+            result = run1()
+        #except:
+            #sleep(10)
+            #logger.info('Something BAD happened. Sleeping for 10 s ...')
 
