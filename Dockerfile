@@ -2,7 +2,7 @@
 FROM continuumio/miniconda3
  
 # Set working directory for the project
-WORKDIR /
+WORKDIR /app/
  
 # Create Conda environment from the YAML filei
 COPY environment-dev.yml .
@@ -22,4 +22,5 @@ RUN python -c "import make_dashboard"
 
 # Python program to run in the container
 COPY lume-impact-live-demo.py .
+COPY run_lume_live.bash
 ENTRYPOINT ["conda", "run", "-n", "lume-live-dev", "ipython", "lume-impact-live-demo.py"]

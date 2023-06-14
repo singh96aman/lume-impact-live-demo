@@ -7,7 +7,7 @@ helpFunction()
    echo "Example Usage: $0 -e lume-live-dev --p 24899 -x /sdf/group/ard/thakur12/lcls-lattice"
    echo -e "\t-e Please pass the environment.yml file name here"
    echo -e "\t-p Please pass the Epics Server Port"
-   echo -e "\t-x Please specify the LCLS_LATTICE Path" 
+   echo -e "\t-x Please specify the LCLS_LATTICE Path"
    
    echo -e "\nOther Parameters : \n"
    echo -e "\t-d Debug=True/False"
@@ -30,7 +30,7 @@ do
    case "$opt" in
       e ) envfile="$OPTARG" ;;
       p ) epicsport="$OPTARG" ;;
-      x ) lcls_lattice="$OPTARG" ;;
+      x ) lcls_lattice="$OPTARG" ;;;
       d ) debug="$OPTARG" ;;
       v ) use_vcc="$OPTARG" ;;
       l ) live="$OPTARG" ;;
@@ -40,7 +40,7 @@ do
    esac
 done
 
-if [ -z "$envfile" ] || [ -z "$epicsport" ] || [ -z "$lcls_lattice" ]
+if [ -z "$envfile" ] || [ -z "$epicsport" ] || [ -z "$lcls_lattice" ] || [ -z "$runtime_env" ]
 then
    echo "Service cannot be started without Environment File, Epics Port and LCLS_LATTICE Location";
    helpFunction
@@ -75,4 +75,6 @@ export LCLS_LATTICE="$lcls_lattice"
 
 #######Logging Repository#######
 echo 'Running lume-impact-live-demo.py'
-ipython lume-impact-live-demo.py -- -d "$debug" -v "$use_vcc" -l "$live" -m "$model" -t "$host"
+#ipython lume-impact-live-demo.py -- -d "$debug" -v "$use_vcc" -l "$live" -m "$model" -t "$host"
+
+echo 'All Done!'
