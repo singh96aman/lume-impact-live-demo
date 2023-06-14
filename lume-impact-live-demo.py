@@ -3,21 +3,22 @@
 
 # # Live cu-inj-live-impact 
 
-# In[ ]:
+# In[46]:
 
 
 # Setup directories, and convert dashboard notebook to a script for importing
 #!./setup.bash
+print("Running LUME IMPACT SERVICE.....")
 
 
-# In[ ]:
+# In[47]:
 
 
 get_ipython().run_line_magic('load_ext', 'autoreload')
 get_ipython().run_line_magic('autoreload', '2')
 
 
-# In[ ]:
+# In[48]:
 
 
 from impact import evaluate_impact_with_distgen, run_impact_with_distgen
@@ -35,7 +36,7 @@ import matplotlib as mpl
 from pmd_beamphysics.units import e_charge
 
 
-# In[ ]:
+# In[49]:
 
 
 import pandas as pd
@@ -62,19 +63,60 @@ get_ipython().run_line_magic('config', "InlineBackend.figure_format = 'retina'")
 
 # # Top level config
 
-# In[ ]:
+# In[50]:
 
 
-DEBUG=False
-USE_VCC = False
-LIVE = False
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-d", "--debug", help = "Debug Mode", default = False)
+parser.add_argument("-v", "--use_vcc", help = "Use VCC - True When VCC is Active", default = True)
+parser.add_argument("-l", "--live", help = "Live Mode -  True When BEAM is Active", default = True)
+parser.add_argument("-m", "--model", help = "Mention the Injector Model", default = "sc_inj")
+parser.add_argument("-t", "--host", help = "Mention the host", default = "sdf")
+
+
+# In[51]:
+
+
+def convertArgFromStringToBool(value):
+    if isinstance(value, str):
+        if value == 'True' or value == 'true':
+            return True
+        else:
+            return False
+
+
+# In[52]:
+
+
+args, unknown = parser.parse_known_args()
+
+DEBUG = convertArgFromStringToBool(args.debug)
+USE_VCC = convertArgFromStringToBool(args.use_vcc)
+LIVE = convertArgFromStringToBool(args.live)
+MODEL = args.model
+HOST = args.host
+
 SNAPSHOT = 'examples/sc_inj-snapshot-2022-11-12T12:38:08-08:00.h5'
 MIN_CHARGE_pC = 10
-code_directory = '/sdf/group/ard/thakur12/lume-impact-live-demo/'
 
-MODEL = 'sc_inj'
+print('Starting LUME LIVE SERVICE with Arguments - ', args)
 
-import os, logging
+
+# In[53]:
+
+
+config = toml.load(f"configs/{HOST}_{MODEL}.toml")
+PREFIX = f'lume-impact-live-demo-{HOST}-{MODEL}'
+
+
+# ## Logging
+
+# In[54]:
+
+
+import logging
 
 # Gets or creates a logger
 logger = logging.getLogger(PREFIX)  
@@ -82,9 +124,9 @@ logger = logging.getLogger(PREFIX)
 # set log level
 logger.setLevel(logging.INFO)
 
+LOG_LOCATION = config.get('log_dir')
 # define file handler and set formatter
-file_handler = logging.FileHandler(f'{PREFIX}.log')
-#formatter    = logging.Formatter('%(asctime)s : %(levelname)s : %(name)s : %(message)s')
+file_handler = logging.FileHandler(f'{LOG_LOCATION}/{PREFIX}.log')
 formatter    = logging.Formatter(fmt="%(asctime)s :  %(name)s : %(message)s ", datefmt="%Y-%m-%dT%H:%M:%S%z")
 
 # Add print to stdout
@@ -95,23 +137,10 @@ file_handler.setFormatter(formatter)
 # add file handler to logger
 logger.addHandler(file_handler)
 
-os.environ["SCRATCH"] = '/scratch/t/thakur12'
-os.environ["LCLS_LATTICE"] = '/sdf/group/ard/thakur12/lcls-lattice'
-os.chdir(code_directory)
-config = toml.load("configs/sdf_sc_inj.toml")
-
-
-# In[ ]:
-
-
-PREFIX = f'lume-impact-live-demo-{MODEL}'
-
 
 # ## Utils
 
-# In[ ]:
-
-logger.info('Starting Lume-Live Service...')
+# In[55]:
 
 
 # Saving and loading
@@ -146,7 +175,7 @@ def load_pvdata(filename):
 # 
 # See README for required toml definition.
 
-# In[ ]:
+# In[56]:
 
 
 HOST = config.get('host') # mcc-simul or 'sdf'
@@ -167,12 +196,9 @@ def get_path(key):
 
 SUMMARY_OUTPUT_DIR = get_path('summary_output_dir')
 
-
-
 ARCHIVE_DIR = get_path('archive_dir')
 
 SNAPSHOT_DIR = get_path('snapshot_dir')
-
 
 # Dummy file for distgen
 DISTGEN_LASER_FILE = config.get('distgen_laser_file')
@@ -201,7 +227,7 @@ if HOST == 'sdf':
 
 
 
-# In[ ]:
+# In[57]:
 
 
 CONFIG0 = {}
@@ -246,7 +272,13 @@ else:
 
 # # Select: LCLS or FACET
 
-# In[ ]:
+# In[58]:
+
+
+os.environ["LCLS_LATTICE"]="/sdf/group/ard/thakur12/lcls-lattice"
+
+
+# In[59]:
 
 
 # PV -> Sim conversion table
@@ -310,7 +342,7 @@ else:
     raise
 
 
-# In[ ]:
+# In[60]:
 
 
 CONFIG0, SETTINGS0
@@ -318,7 +350,7 @@ CONFIG0, SETTINGS0
 
 # # Set up monitors
 
-# In[ ]:
+# In[61]:
 
 
 # Gun: 700 kV
@@ -326,7 +358,7 @@ CONFIG0, SETTINGS0
 # Buncher: +60 deg relative to on-crest
 
 
-# In[ ]:
+# In[62]:
 
 
 DF = pd.read_csv(CSV)#.dropna()
@@ -339,7 +371,7 @@ if USE_VCC:
 DF
 
 
-# In[ ]:
+# In[63]:
 
 
 if LIVE:
@@ -348,7 +380,7 @@ if LIVE:
     sleep(5)
 
 
-# In[ ]:
+# In[64]:
 
 
 def get_snapshot(snapshot_file=None):
@@ -387,7 +419,7 @@ def get_snapshot(snapshot_file=None):
 # PVDATA, ITIME
 
 
-# In[ ]:
+# In[65]:
 
 
 #while True:
@@ -396,7 +428,7 @@ def get_snapshot(snapshot_file=None):
 
 # # EPICS -> Simulation settings
 
-# In[ ]:
+# In[66]:
 
 
 def get_settings(csv, base_settings={}, snapshot_dir=None, snapshot_file=None):
@@ -451,13 +483,13 @@ def get_settings(csv, base_settings={}, snapshot_dir=None, snapshot_file=None):
 # res[1]
 
 
-# In[ ]:
+# In[67]:
 
 
 #get_settings(CSV, SETTINGS0, snapshot_dir='.', snapshot_file=SNAPSHOT)
 
 
-# In[ ]:
+# In[68]:
 
 
 # gfile = CONFIG0['distgen_input_file']
@@ -472,7 +504,7 @@ def get_settings(csv, base_settings={}, snapshot_dir=None, snapshot_file=None):
 # G.particles.plot('x', 'y', figsize=(5,5))
 
 
-# In[ ]:
+# In[69]:
 
 
 DO_TIMING = False
@@ -498,7 +530,7 @@ if DO_TIMING:
 
 # # Get live values, run Impact-T, make dashboard
 
-# In[ ]:
+# In[70]:
 
 
 # Patch this into the function below for the dashboard creation
@@ -523,7 +555,7 @@ def my_merit(impact_object, itime):
     return merit0
 
 
-# In[ ]:
+# In[71]:
 
 
 def run1():
@@ -565,34 +597,34 @@ def run1():
     
 
 
-# In[ ]:
+# In[72]:
 
 
 # %%time
 # result = run1()
 
 
-# In[ ]:
+# In[73]:
 
 
 #result.keys()
 
 
-# In[ ]:
+# In[74]:
 
 
 # Basic config
 #result['config']
 
 
-# In[ ]:
+# In[75]:
 
 
 # Simulation inputs
 #result['inputs']
 
 
-# In[ ]:
+# In[76]:
 
 
 # Simulation outputs
@@ -601,7 +633,7 @@ def run1():
 
 # # Show the plot 
 
-# In[ ]:
+# In[77]:
 
 
 # from IPython.display import Image
@@ -611,14 +643,20 @@ def run1():
 # # loop it
 # 
 
-# In[ ]:
+# In[78]:
 
 
 if __name__ == '__main__':
-    while True:
+    #while True:
         #try:
             result = run1()
         #except:
-            #sleep(10)
-            #logger.info('Something BAD happened. Sleeping for 10 s ...')
+        #    sleep(10)
+        #    logger.info('Something BAD happened. Sleeping for 10 s ...')
+
+
+# In[ ]:
+
+
+
 
