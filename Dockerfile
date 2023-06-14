@@ -22,5 +22,5 @@ RUN python -c "import make_dashboard"
 
 # Python program to run in the container
 COPY lume-impact-live-demo.py .
-COPY run_lume_live.bash
+COPY run_lume_live.bash .
 ENTRYPOINT ["conda", "run", "-n", "lume-live-dev", "ipython", "lume-impact-live-demo.py"]
