@@ -16,14 +16,14 @@ RUN echo "Making sure Key Packages are installed correctly..."
 RUN python -c "import impact"
 RUN echo ${PYTHONPATH}
 
-#Convert Jupyter Notebooks to Python Files and Create Necessary Folders
-RUN echo "Convert Jupyter Notebooks to Python Files and Create Necessary Folders"
-RUN conda run -n lume-live-dev jupyter nbconvert --to script ./lume-impact-live-demo.ipynb
-RUN conda run -n lume-live-dev jupyter nbconvert --to script ./make_dashboard.ipynb
-RUN conda run -n lume-live-dev jupyter nbconvert --to script ./get_vcc_image.ipynb
-
 #Copy SourceCode
 COPY . /app/
+
+#Convert Jupyter Notebooks to Python Files and Create Necessary Folders
+RUN echo "Convert Jupyter Notebooks to Python Files and Create Necessary Folders"
+RUN conda run -n lume-live-dev jupyter nbconvert --to script /app/lume-impact-live-demo.ipynb
+RUN conda run -n lume-live-dev jupyter nbconvert --to script /app/make_dashboard.ipynb
+RUN conda run -n lume-live-dev jupyter nbconvert --to script /app/get_vcc_image.ipynb
 
 SHELL ["mkdir", "-p", "/app/archive"]
 SHELL ["mkdir", "-p", "/app/output"]
