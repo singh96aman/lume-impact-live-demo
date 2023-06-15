@@ -4,7 +4,7 @@
 helpFunction()
 {
    echo ""
-   echo "Example Usage: $0 -e lume-live-dev --p 24899 -x /sdf/group/ard/thakur12/lcls-lattice"
+   echo "Example Usage: $0 -e lume-live-dev -p 24899 -x /sdf/group/ard/thakur12/lcls-lattice"
    echo -e "\t-e Please pass the environment.yml file name here"
    echo -e "\t-p Please pass the Epics Server Port"
    echo -e "\t-x Please specify the LCLS_LATTICE Path"
@@ -40,7 +40,7 @@ do
    esac
 done
 
-if [ -z "$envfile" ] || [ -z "$epicsport" ] || [ -z "$lcls_lattice" ] || [ -z "$runtime_env" ]
+if [ -z "$envfile" ] || [ -z "$epicsport" ] || [ -z "$lcls_lattice" ]
 then
    echo "Service cannot be started without Environment File, Epics Port and LCLS_LATTICE Location";
    helpFunction
