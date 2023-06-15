@@ -30,7 +30,7 @@ do
    case "$opt" in
       e ) envfile="$OPTARG" ;;
       p ) epicsport="$OPTARG" ;;
-      x ) lcls_lattice="$OPTARG" ;;;
+      x ) lcls_lattice="$OPTARG" ;;
       d ) debug="$OPTARG" ;;
       v ) use_vcc="$OPTARG" ;;
       l ) live="$OPTARG" ;;
