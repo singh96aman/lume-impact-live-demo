@@ -55,15 +55,15 @@ conda activate "$envfile"
 
 #######Converting Jupyter Notebook to Python Files and Creating Folders#######
 echo 'Converting Jupyter Notebook to Python Files and Creating Folders'
-jupyter nbconvert --to script lume-impact-live-demo.ipynb 
+#jupyter nbconvert --to script lume-impact-live-demo.ipynb 
 # jupyter nbconvert --to script make_dashboard.ipynb
 # jupyter nbconvert --to script get_vcc_image.ipynb
 
-mkdir -p archive
-mkdir -p output
-mkdir -p plot
-mkdir -p snapshot
-mkdir -p log
+#mkdir -p archive
+#mkdir -p output
+#mkdir -p plot
+#mkdir -p snapshot
+#mkdir -p log
 
 #######Checking if Process is able to connect to Epics#######
 echo 'Checking if Process is able to connect to Epics'

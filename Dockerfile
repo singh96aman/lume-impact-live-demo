@@ -15,7 +15,21 @@ SHELL ["conda", "run", "-n", "lume-live-dev", "/bin/bash", "-c"]
 RUN echo "Making sure Key Packages are installed correctly..."
 RUN python -c "import impact"
 RUN echo ${PYTHONPATH}
+
+#Convert Jupyter Notebooks to Python Files and Create Necessary Folders
+RUN echo "Convert Jupyter Notebooks to Python Files and Create Necessary Folders"
+RUN jupyter nbconvert --to script lume-impact-live-demo.ipynb 
+RUN jupyter nbconvert --to script make_dashboard.ipynb
+RUN jupyter nbconvert --to script get_vcc_image.ipynb
+
+#Copy SourceCode
 COPY . /app/
+RUN mkdir -p /app/archive
+RUN mkdir -p /app/output
+RUN mkdir -p /app/plot
+RUN mkdir -p /app/snapshot
+RUN mkdir -p /app/log
+
 
 # Python program to run in the container
 ENTRYPOINT ["conda", "run", "-n", "lume-live-dev", "ipython", "lume-impact-live-demo.py"]
