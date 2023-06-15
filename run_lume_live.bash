@@ -75,6 +75,6 @@ export LCLS_LATTICE="$lcls_lattice"
 
 #######Logging Repository#######
 echo 'Running lume-impact-live-demo.py'
-#ipython lume-impact-live-demo.py -- -d "$debug" -v "$use_vcc" -l "$live" -m "$model" -t "$host"
+ipython lume-impact-live-demo.py -- -d "$debug" -v "$use_vcc" -l "$live" -m "$model" -t "$host"
 
 echo 'All Done!'
