@@ -24,11 +24,11 @@ SHELL ["conda", "run", "-n", "lume-live-dev", "jupyter nbconvert --to script get
 
 #Copy SourceCode
 COPY . /app/
-RUN mkdir -p /app/archive
-RUN mkdir -p /app/output
-RUN mkdir -p /app/plot
-RUN mkdir -p /app/snapshot
-RUN mkdir -p /app/log
+SHELL ["mkdir", "-p", "/app/archive"]
+SHELL ["mkdir", "-p", "/app/output"]
+SHELL ["mkdir", "-p", "/app/plot"]
+SHELL ["mkdir", "-p", "/app/snapshot"]
+SHELL ["mkdir", "-p", "/app/log"]
 
 
 # Python program to run in the container
