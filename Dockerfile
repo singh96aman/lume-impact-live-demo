@@ -15,12 +15,7 @@ SHELL ["conda", "run", "-n", "lume-live-dev", "/bin/bash", "-c"]
 RUN echo "Making sure Key Packages are installed correctly..."
 RUN python -c "import impact"
 RUN echo ${PYTHONPATH}
-COPY make_dashboard.py .
-COPY get_vcc_image.py .
-RUN python -c "import make_dashboard"
- 
+COPY . /app/
 
 # Python program to run in the container
-COPY lume-impact-live-demo.py .
-COPY run_lume_live.bash .
 ENTRYPOINT ["conda", "run", "-n", "lume-live-dev", "ipython", "lume-impact-live-demo.py"]
