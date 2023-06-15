@@ -72,6 +72,7 @@ caget KLYS:LI22:11:KPHR || echo 'If this returns an ERROR, Try Another Port by\n
 ssh -fN -L 24666:lcls-prod01.slac.stanford.edu:5068 centos7.slac.stanford.edu\n
 Pass the new port (example - 24666) and run the file again'
 export LCLS_LATTICE="$lcls_lattice"
+export SCRATCH="/scratch/t/thakur12/"
 
 #######Logging Repository#######
 echo 'Running lume-impact-live-demo.py'
