@@ -13,4 +13,3 @@ num_procs=64
 mpi_run_cmd="salloc --partition shared -N 1 -n {nproc} /sdf/sw/gcc-4.8.5/openmpi-4.0.4/bin/mpirun -n {nproc} {command_mpi}"
 impact_command="/sdf/group/ard/impact/bin/ImpactTexe"
 impact_command_mpi="/sdf/group/ard/impact/bin/ImpactTexe-mpi"
-log_dir = "/sdf/group/ard/thakur12/lume-impact-live-demo/log/"
