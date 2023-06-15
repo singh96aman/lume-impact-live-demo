@@ -18,12 +18,13 @@ RUN echo ${PYTHONPATH}
 
 #Convert Jupyter Notebooks to Python Files and Create Necessary Folders
 RUN echo "Convert Jupyter Notebooks to Python Files and Create Necessary Folders"
-SHELL ["conda", "run", "-n", "lume-live-dev", "jupyter nbconvert --to script lume-impact-live-demo.ipynb", "-c"]
-SHELL ["conda", "run", "-n", "lume-live-dev", "jupyter nbconvert --to script make_dashboard.ipynb", "-c"]
-SHELL ["conda", "run", "-n", "lume-live-dev", "jupyter nbconvert --to script get_vcc_image.ipynb", "-c"]
+SHELL ["conda", "run", "-n", "lume-live-dev", "jupyter nbconvert --to script lume-impact-live-demo.ipynb"]
+SHELL ["conda", "run", "-n", "lume-live-dev", "jupyter nbconvert --to script make_dashboard.ipynb"]
+SHELL ["conda", "run", "-n", "lume-live-dev", "jupyter nbconvert --to script get_vcc_image.ipynb"]
 
 #Copy SourceCode
 COPY . /app/
+
 SHELL ["mkdir", "-p", "/app/archive"]
 SHELL ["mkdir", "-p", "/app/output"]
 SHELL ["mkdir", "-p", "/app/plot"]
@@ -32,4 +33,4 @@ SHELL ["mkdir", "-p", "/app/log"]
 
 
 # Python program to run in the container
-ENTRYPOINT ["conda", "run", "-n", "lume-live-dev", "ipython", "lume-impact-live-demo.py"]
+ENTRYPOINT ["conda", "run", "-n", "lume-live-dev", "ipython", "/app/lume-impact-live-demo.py"]
