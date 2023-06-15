@@ -240,6 +240,7 @@ SETTINGS0 = {
  'header:Ny': 32,
  'header:Nz': 32,
  'numprocs': NUM_PROCS,
+ 'header:Nprow' : 1
 # 'mpi_run': MPI_RUN_CMD
    }
 
