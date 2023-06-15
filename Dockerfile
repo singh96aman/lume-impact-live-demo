@@ -18,9 +18,9 @@ RUN echo ${PYTHONPATH}
 
 #Convert Jupyter Notebooks to Python Files and Create Necessary Folders
 RUN echo "Convert Jupyter Notebooks to Python Files and Create Necessary Folders"
-RUN jupyter nbconvert --to script lume-impact-live-demo.ipynb 
-RUN jupyter nbconvert --to script make_dashboard.ipynb
-RUN jupyter nbconvert --to script get_vcc_image.ipynb
+SHELL ["conda", "run", "-n", "lume-live-dev", "jupyter nbconvert --to script lume-impact-live-demo.ipynb", "-c"]
+SHELL ["conda", "run", "-n", "lume-live-dev", "jupyter nbconvert --to script make_dashboard.ipynb", "-c"]
+SHELL ["conda", "run", "-n", "lume-live-dev", "jupyter nbconvert --to script get_vcc_image.ipynb", "-c"]
 
 #Copy SourceCode
 COPY . /app/
