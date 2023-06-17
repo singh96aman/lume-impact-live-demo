@@ -40,8 +40,8 @@ RUN conda info | grep -i 'base environment'
 RUN source ~/.bashrc && source /opt/conda/etc/profile.d/conda.sh && /opt/conda/bin/activate && conda init bash && conda activate lume-live-dev
 
 RUN conda install -c conda-forge impact-t
-#RUN conda run -n lume-live-dev install -c conda-forge impact-t=*=mpi_openmpi*
-#RUN conda run -n lume-live-dev install -c conda-forge impact-t=*=mpi_mpich*
+RUN conda run -n lume-live-dev install -c conda-forge impact-t=*=mpi_openmpi*
+RUN conda run -n lume-live-dev install -c conda-forge impact-t=*=mpi_mpich*
 
 SHELL ["mkdir", "-p", "/app/archive"]
 SHELL ["mkdir", "-p", "/app/output"]
