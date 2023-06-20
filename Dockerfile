@@ -43,6 +43,9 @@ RUN source ~/.bashrc && source /opt/conda/etc/profile.d/conda.sh && /opt/conda/b
 RUN conda install -c conda-forge impact-t=*=mpi_openmpi*
 #RUN conda install -c conda-forge impact-t=*=mpi_mpich*
 
+RUN echo "Check if Impactexe and Impactexe-mpi are installed"
+RUN ls -ltr /opt/conda/envs/lume-live-dev/bin/ | grep "Impact"
+
 SHELL ["mkdir", "-p", "/app/archive"]
 SHELL ["mkdir", "-p", "/app/output"]
 SHELL ["mkdir", "-p", "/app/plot"]
