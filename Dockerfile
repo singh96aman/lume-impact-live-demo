@@ -41,7 +41,7 @@ RUN source ~/.bashrc && source /opt/conda/etc/profile.d/conda.sh && /opt/conda/b
 
 RUN conda install -c conda-forge impact-t
 RUN conda install -c conda-forge impact-t=*=mpi_openmpi*
-RUN conda install -c conda-forge impact-t=*=mpi_mpich*
+#RUN conda install -c conda-forge impact-t=*=mpi_mpich*
 
 SHELL ["mkdir", "-p", "/app/archive"]
 SHELL ["mkdir", "-p", "/app/output"]

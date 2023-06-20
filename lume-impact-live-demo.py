@@ -11,6 +11,12 @@
 print("Running LUME IMPACT SERVICE.....")
 
 
+# In[ ]:
+
+
+
+
+
 # In[47]:
 
 
@@ -70,8 +76,8 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-d", "--debug", help = "Debug Mode", default = False)
-parser.add_argument("-v", "--use_vcc", help = "Use VCC - True When VCC is Active", default = True)
-parser.add_argument("-l", "--live", help = "Live Mode -  True When BEAM is Active", default = True)
+parser.add_argument("-v", "--use_vcc", help = "Use VCC - True When VCC is Active", default = False)
+parser.add_argument("-l", "--live", help = "Live Mode -  True When BEAM is Active", default = False)
 parser.add_argument("-m", "--model", help = "Mention the Injector Model", default = "sc_inj")
 parser.add_argument("-t", "--host", help = "Mention the host", default = "sdf")
 
@@ -124,9 +130,8 @@ logger = logging.getLogger(PREFIX)
 # set log level
 logger.setLevel(logging.INFO)
 
-LOG_LOCATION = config.get('log_dir')
 # define file handler and set formatter
-file_handler = logging.FileHandler(f'{LOG_LOCATION}/{PREFIX}.log')
+file_handler = logging.FileHandler(f'log/{PREFIX}.log')
 formatter    = logging.Formatter(fmt="%(asctime)s :  %(name)s : %(message)s ", datefmt="%Y-%m-%dT%H:%M:%S%z")
 
 # Add print to stdout
@@ -213,17 +218,17 @@ else:
     NUM_PROCS = int(NUM_PROCS)
 
 
-# if using sdf:
-if HOST == 'sdf':    
-    # check that environment variables are configured for execution
-    IMPACT_COMMAND = config.get("impact_command")
-    if not IMPACT_COMMAND:
-        raise ValueError("impact_command not defined in toml.")
+#if using sdf:
+# if HOST == 'sdf':    
+#     #check that environment variables are configured for execution
+#     IMPACT_COMMAND = config.get("impact_command")
+#     if not IMPACT_COMMAND:
+#        raise ValueError("impact_command not defined in toml.")
 
 
-    IMPACT_COMMAND_MPI = config.get("impact_command_mpi")
-    if not IMPACT_COMMAND_MPI:
-        raise ValueError("impact_command_mpi not defined in toml.")
+#     IMPACT_COMMAND_MPI = config.get("impact_command_mpi")
+#     if not IMPACT_COMMAND_MPI:
+#        raise ValueError("impact_command_mpi not defined in toml.")
 
 
 
@@ -239,8 +244,7 @@ SETTINGS0 = {
  'header:Nx': 32,
  'header:Ny': 32,
  'header:Nz': 32,
- 'numprocs': NUM_PROCS,
- 'header:Nprow' : 1
+ #'numprocs': NUM_PROCS,
 # 'mpi_run': MPI_RUN_CMD
    }
 
@@ -259,8 +263,8 @@ if DEBUG:
 if HOST in ('sdf', ):
     
      # SDF setup 
-    SETTINGS0['command'] =  IMPACT_COMMAND
-    SETTINGS0['command_mpi'] =  IMPACT_COMMAND_MPI
+    # SETTINGS0['command'] =  IMPACT_COMMAND
+    # SETTINGS0['command_mpi'] =  IMPACT_COMMAND_MPI
     SETTINGS0['mpi_run'] = config.get("mpi_run_cmd")
     
 elif HOST == 'local':
@@ -650,6 +654,8 @@ def run1():
 if __name__ == '__main__':
     #while True:
         #try:
+            os.environ['LCLS_LATTICE'] = '/sdf/group/ard/thakur12/lcls-lattice'
+            os.environ['SCRATCH'] = '/scratch/t/thakur12'
             result = run1()
         #except:
         #    sleep(10)
