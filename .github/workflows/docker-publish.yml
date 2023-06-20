@@ -25,7 +25,8 @@ env:
 jobs:
   build:
 
-    runs-on: centos:7
+    #runs-on: centos:7
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
