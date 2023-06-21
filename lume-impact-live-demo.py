@@ -69,7 +69,7 @@ get_ipython().run_line_magic('config', "InlineBackend.figure_format = 'retina'")
 
 # # Top level config
 
-# In[50]:
+# In[ ]:
 
 
 import argparse
@@ -80,6 +80,7 @@ parser.add_argument("-v", "--use_vcc", help = "Use VCC - True When VCC is Active
 parser.add_argument("-l", "--live", help = "Live Mode -  True When BEAM is Active", default = False)
 parser.add_argument("-m", "--model", help = "Mention the Injector Model", default = "sc_inj")
 parser.add_argument("-t", "--host", help = "Mention the host", default = "singularity")
+parser.add_argument("-p", "--num_procs", help = "Mention the Num Procs", default = 64)
 
 
 # In[51]:
@@ -103,6 +104,8 @@ USE_VCC = convertArgFromStringToBool(args.use_vcc)
 LIVE = convertArgFromStringToBool(args.live)
 MODEL = args.model
 HOST = args.host
+NUM_PROCS_ARGS = int(args.num_procs)
+print('Setting NUM PROCS')
 
 SNAPSHOT = 'examples/sc_inj-snapshot-2022-11-12T12:38:08-08:00.h5'
 MIN_CHARGE_pC = 10
@@ -219,6 +222,10 @@ if not NUM_PROCS:
 else:
     NUM_PROCS = int(NUM_PROCS)
 
+if NUM_PROCS_ARGS != NUM_PROCS:
+    NUM_PROCS = NUM_PROCS_ARGS
+
+print('NUMBER OF PROCS USED IS - ', NUM_PROCS)
 
 # if using sdf:
 if HOST == 'sdf':    
