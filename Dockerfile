@@ -5,6 +5,8 @@ FROM continuumio/miniconda3
 # Set working directory for the project
 WORKDIR /app/
 
+RUN sudo apt-get update && sudo apt install gfortran
+
 # Create Conda environment from the YAML filei
 COPY lume-live-dev.yml .
 RUN conda env create -f lume-live-dev.yml
@@ -37,7 +39,11 @@ RUN ls -a ~
 
 RUN conda info | grep -i 'base environment'
 
-RUN source ~/.bashrc && source /opt/conda/etc/profile.d/conda.sh && /opt/conda/bin/activate && conda init bash && conda activate lume-live-dev && conda install -c conda-forge impact-t=*=mpi_openmpi*
+RUN source ~/.bashrc 
+    && source /opt/conda/etc/profile.d/conda.sh 
+    && /opt/conda/bin/activate && conda init bash 
+    && conda activate lume-live-dev && conda install -c anaconda cmake 
+    && conda install -c conda-forge impact-t=*=mpi_openmpi*
 
 RUN echo "Check if Impactexe and Impactexe-mpi are installed"
 RUN ls -ltr /opt/conda/envs/lume-live-dev/bin/ | grep "Impact"
