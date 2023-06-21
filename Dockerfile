@@ -5,7 +5,7 @@ FROM continuumio/miniconda3
 # Set working directory for the project
 WORKDIR /app/
 
-RUN apt-get update && apt install gfortran
+RUN apt-get update && apt install gfortran -y
 
 RUN source ~/.bashrc \
     && source /opt/conda/etc/profile.d/conda.sh \
