@@ -17,8 +17,11 @@ RUN source ~/.bashrc \
     && conda activate lume-live-dev \
     && conda install -c conda-forge impact-t=*=mpi_openmpi*
 
- RUN git clone https://github.com/impact-lbl/IMPACT-T.git \
-     && cd IMPACT-T/src/ && /opt/conda/envs/lume-live-dev/bin/cmake -S . -B build -DUSE_MPI=ON \
+RUN apt install make
+
+RUN git clone https://github.com/impact-lbl/IMPACT-T.git
+
+RUN cd IMPACT-T/src/ && /opt/conda/envs/lume-live-dev/bin/cmake -S . -B build -DUSE_MPI=ON \
      && /opt/conda/envs/lume-live-dev/bin/cmake --build build \
      && /opt/conda/envs/lume-live-dev/bin/cmake --build build --target install
 
