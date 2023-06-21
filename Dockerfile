@@ -33,10 +33,10 @@ RUN ls -a ~
 
 RUN conda info | grep -i 'base environment'
 
-RUN source ~/.bashrc \
-    && source /opt/conda/etc/profile.d/conda.sh \
-    && /opt/conda/bin/activate && conda init bash \ 
-    && conda activate lume-live-dev && conda install -c anaconda cmake
+# RUN source ~/.bashrc \
+#     && source /opt/conda/etc/profile.d/conda.sh \
+#     && /opt/conda/bin/activate && conda init bash \ 
+#     && conda activate lume-live-dev && conda install -c anaconda cmake
 
 RUN apt-get update && apt install gfortran -y
 
