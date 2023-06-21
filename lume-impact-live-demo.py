@@ -79,7 +79,7 @@ parser.add_argument("-d", "--debug", help = "Debug Mode", default = False)
 parser.add_argument("-v", "--use_vcc", help = "Use VCC - True When VCC is Active", default = False)
 parser.add_argument("-l", "--live", help = "Live Mode -  True When BEAM is Active", default = False)
 parser.add_argument("-m", "--model", help = "Mention the Injector Model", default = "sc_inj")
-parser.add_argument("-t", "--host", help = "Mention the host", default = "sdf")
+parser.add_argument("-t", "--host", help = "Mention the host", default = "singularity")
 
 
 # In[51]:
@@ -114,6 +114,8 @@ print('Starting LUME LIVE SERVICE with Arguments - ', args)
 
 
 config = toml.load(f"configs/{HOST}_{MODEL}.toml")
+print('Config TOML Loaded -')
+print(config)
 PREFIX = f'lume-impact-live-demo-{HOST}-{MODEL}'
 
 
@@ -218,17 +220,17 @@ else:
     NUM_PROCS = int(NUM_PROCS)
 
 
-#if using sdf:
-# if HOST == 'sdf':    
-#     #check that environment variables are configured for execution
-#     IMPACT_COMMAND = config.get("impact_command")
-#     if not IMPACT_COMMAND:
-#        raise ValueError("impact_command not defined in toml.")
+# if using sdf:
+if HOST == 'sdf':    
+    #check that environment variables are configured for execution
+    IMPACT_COMMAND = config.get("impact_command")
+    if not IMPACT_COMMAND:
+       raise ValueError("impact_command not defined in toml.")
 
 
-#     IMPACT_COMMAND_MPI = config.get("impact_command_mpi")
-#     if not IMPACT_COMMAND_MPI:
-#        raise ValueError("impact_command_mpi not defined in toml.")
+    IMPACT_COMMAND_MPI = config.get("impact_command_mpi")
+    if not IMPACT_COMMAND_MPI:
+       raise ValueError("impact_command_mpi not defined in toml.")
 
 
 
@@ -260,11 +262,11 @@ if DEBUG:
 
     
 # Host config    
-if HOST in ('sdf', ):
+if HOST in ('sdf'):
     
-     # SDF setup 
-    # SETTINGS0['command'] =  IMPACT_COMMAND
-    # SETTINGS0['command_mpi'] =  IMPACT_COMMAND_MPI
+    #SDF setup 
+    SETTINGS0['command'] =  IMPACT_COMMAND
+    SETTINGS0['command_mpi'] =  IMPACT_COMMAND_MPI
     SETTINGS0['mpi_run'] = config.get("mpi_run_cmd")
     
 elif HOST == 'local':

@@ -65,4 +65,4 @@ RUN conda run -n lume-live-dev jupyter nbconvert --to script /app/make_dashboard
 RUN conda run -n lume-live-dev jupyter nbconvert --to script /app/get_vcc_image.ipynb
 
 # Python program to run in the container
-ENTRYPOINT ["conda", "run", "-n", "lume-live-dev", "ipython", "/app/lume-impact-live-demo.py"]
+ENTRYPOINT ["conda", "run", "-n", "lume-live-dev", "ipython", "/app/lume-impact-live-demo.py -- -t 'singularity'"]
