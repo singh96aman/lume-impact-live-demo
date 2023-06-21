@@ -5,7 +5,7 @@ FROM continuumio/miniconda3
 # Set working directory for the project
 WORKDIR /app/
 
-RUN apt-get update && apt-get install gfortran
+RUN apt-get update && apt-get install -y gfortran
 
 # Create Conda environment from the YAML filei
 COPY lume-live-dev.yml .
