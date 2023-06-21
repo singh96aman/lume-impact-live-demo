@@ -8,8 +8,16 @@ RUN conda env create -f lume-live-dev.yml
 
 RUN apt-get update && apt install gfortran -y
 
-# RUN git clone https://github.com/impact-lbl/IMPACT-T.git \
-#     && cd IMPACT-T/src/ && cmake -S . -B build -DUSE_MPI=ON && cmake --build build && cmake --build build --target install
+RUN source ~/.bashrc \
+    && source /opt/conda/etc/profile.d/conda.sh \
+    && /opt/conda/bin/activate && conda init bash \ 
+    && conda activate lume-live-dev \
+    && conda install -c conda-forge impact-t=*=mpi_openmpi*
+
+ RUN git clone https://github.com/impact-lbl/IMPACT-T.git \
+     && cd IMPACT-T/src/ && /opt/conda/envs/lume-live-dev/bin/cmake -S . -B build -DUSE_MPI=ON \
+     && /opt/conda/envs/lume-live-dev/bin/cmake --build build \
+     && /opt/conda/envs/lume-live-dev/bin/cmake --build build --target install
 
 # RUN ls /usr/local/bin | grep "Impact"
 
@@ -32,12 +40,6 @@ RUN apt-get update && apt install gfortran -y
 # RUN ls -a ~
 
 # RUN conda info | grep -i 'base environment'
-
-# RUN source ~/.bashrc \
-#     && source /opt/conda/etc/profile.d/conda.sh \
-#     && /opt/conda/bin/activate && conda init bash \ 
-#     && conda activate lume-live-dev \
-#     && conda install -c conda-forge impact-t=*=mpi_openmpi*
 
 # RUN echo "Check if Impactexe and Impactexe-mpi are installed"
 # RUN ls -ltr /opt/conda/envs/lume-live-dev/bin/ | grep "Impact"
