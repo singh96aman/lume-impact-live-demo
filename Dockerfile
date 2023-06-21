@@ -2,25 +2,25 @@
 #FROM centos:centos7
 FROM continuumio/miniconda3
 
-# Set working directory for the project
-WORKDIR /app/
-
 # Create Conda environment from the YAML filei
 COPY lume-live-dev.yml .
 RUN conda env create -f lume-live-dev.yml   
 
+RUN apt-get update && apt install gfortran -y
+
+RUN git clone https://github.com/impact-lbl/IMPACT-T.git && cd IMPACT-T/src/ \
+    && cmake -S . -B build -DUSE_MPI=ON && cmake --build build && cmake --build build --target install
+
+RUN ls /usr/local/bin | grep "Impact"
+
 # Override default shell and use bash:
 SHELL ["conda", "run", "-n", "lume-live-dev", "/bin/bash", "-c"]
 
-# Activate Conda environment and check if it is working properly
-RUN echo "Making sure Key Packages are installed correctly..."
-RUN python -c "import impact"
-RUN echo ${PYTHONPATH}
+# Set working directory for the project
+WORKDIR /app/
 
 #Copy SourceCode
 COPY . /app/
-
-#RUN git clone https://github.com/impact-lbl/IMPACT-T.git /app/
 
 RUN echo "Installing Impact-T seperately"
 ENV PATH="$PATH:/opt/conda/bin"
@@ -36,18 +36,16 @@ RUN conda info | grep -i 'base environment'
 RUN source ~/.bashrc \
     && source /opt/conda/etc/profile.d/conda.sh \
     && /opt/conda/bin/activate && conda init bash \ 
-    && conda activate lume-live-dev && conda install -c anaconda cmake
-
-RUN apt-get update && apt install gfortran -y
-
-# RUN source ~/.bashrc \
-#     && source /opt/conda/etc/profile.d/conda.sh \
-#     && /opt/conda/bin/activate && conda init bash \ 
-#     && conda activate lume-live-dev \
-#     && conda install -c conda-forge impact-t=*=mpi_openmpi*
+    && conda activate lume-live-dev \
+    && conda install -c conda-forge impact-t=*=mpi_openmpi*
 
 RUN echo "Check if Impactexe and Impactexe-mpi are installed"
 RUN ls -ltr /opt/conda/envs/lume-live-dev/bin/ | grep "Impact"
+
+# Activate Conda environment and check if it is working properly
+RUN echo "Making sure Key Packages are installed correctly..."
+RUN python -c "import impact"
+RUN echo ${PYTHONPATH}
 
 # SHELL ["mkdir", "-p", "/app/archive"]
 # SHELL ["mkdir", "-p", "/app/output"]
