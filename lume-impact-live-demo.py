@@ -253,7 +253,9 @@ SETTINGS0 = {
  'header:Nx': 32,
  'header:Ny': 32,
  'header:Nz': 32,
- #'numprocs': NUM_PROCS,
+ #'header:Nprow' : 64,
+ #'header:Npcol' : 1
+ 'numprocs': NUM_PROCS,
 # 'mpi_run': MPI_RUN_CMD
    }
 
@@ -362,6 +364,7 @@ else:
 
 
 CONFIG0, SETTINGS0
+print('FINAL SETTING - ', SETTINGS0)
 
 
 # # Set up monitors
