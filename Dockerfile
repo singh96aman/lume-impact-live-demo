@@ -20,7 +20,7 @@ RUN echo ${PYTHONPATH}
 #Copy SourceCode
 COPY . /app/
 
-RUN git clone https://github.com/impact-lbl/IMPACT-T.git /app/
+#RUN git clone https://github.com/impact-lbl/IMPACT-T.git /app/
 
 RUN echo "Installing Impact-T seperately"
 ENV PATH="$PATH:/opt/conda/bin"
