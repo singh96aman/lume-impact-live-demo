@@ -253,6 +253,8 @@ SETTINGS0 = {
 SETTINGS0['numprocs'] = NUM_PROCS
 CONFIG0["workdir"] = get_path('workdir')
 
+print('DEBUGGING...', DEBUG)
+
 if DEBUG:
     logger.info('DEBUG MODE: Running without space charge for speed. ')
     SETTINGS0['distgen:n_particle'] = 1000
