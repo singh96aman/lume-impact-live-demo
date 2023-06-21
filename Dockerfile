@@ -8,6 +8,9 @@ RUN conda env create -f lume-live-dev.yml
 
 RUN apt-get update && apt install gfortran -y
 
+# Override default shell and use bash:
+SHELL ["conda", "run", "-n", "lume-live-dev", "/bin/bash", "-c"]
+
 RUN source ~/.bashrc \
     && source /opt/conda/etc/profile.d/conda.sh \
     && /opt/conda/bin/activate && conda init bash \ 
@@ -20,9 +23,6 @@ RUN source ~/.bashrc \
      && /opt/conda/envs/lume-live-dev/bin/cmake --build build --target install
 
 # RUN ls /usr/local/bin | grep "Impact"
-
-# # Override default shell and use bash:
-# SHELL ["conda", "run", "-n", "lume-live-dev", "/bin/bash", "-c"]
 
 # # Set working directory for the project
 # WORKDIR /app/
