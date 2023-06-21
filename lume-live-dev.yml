@@ -13,6 +13,8 @@ dependencies:
   - lume-impact
   - distgen=0.6.11
   - pip
+  - gfortran
+  - cmake
   - pip:
 #    - git+https://github.com/christophermayes/lume-impact
     - git+https://github.com/slaclab/lcls-live

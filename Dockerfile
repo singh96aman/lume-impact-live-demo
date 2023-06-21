@@ -15,12 +15,6 @@ RUN source ~/.bashrc \
     && source /opt/conda/etc/profile.d/conda.sh \
     && /opt/conda/bin/activate && conda init bash \ 
     && conda activate lume-live-dev \
-    && conda install -c anaconda cmake
-
-RUN source ~/.bashrc \
-    && source /opt/conda/etc/profile.d/conda.sh \
-    && /opt/conda/bin/activate && conda init bash \ 
-    && conda activate lume-live-dev \
     && conda install -c conda-forge impact-t=*=mpi_openmpi*
 
  RUN git clone https://github.com/impact-lbl/IMPACT-T.git \
