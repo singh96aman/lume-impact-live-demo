@@ -5,11 +5,11 @@ FROM continuumio/miniconda3
 # Set working directory for the project
 WORKDIR /app/
 
-RUN apt-get update && apt install gfortran
+RUN sudo apt-get update && sudo apt-get install gfortran
 
 # Create Conda environment from the YAML filei
 COPY lume-live-dev.yml .
-RUN conda env create -f lume-live-dev.yml
+RUN conda env create -f lume-live-dev.yml   
 
 # Override default shell and use bash:
 SHELL ["conda", "run", "-n", "lume-live-dev", "/bin/bash", "-c"]
