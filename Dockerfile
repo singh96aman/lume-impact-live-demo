@@ -56,6 +56,7 @@ SHELL ["mkdir", "-p", "/app/output"]
 SHELL ["mkdir", "-p", "/app/plot"]
 SHELL ["mkdir", "-p", "/app/snapshot"]
 SHELL ["mkdir", "-p", "/app/log"]
+SHELL ["mkdir", "-p", "/app/summary"]
 
 #Convert Jupyter Notebooks to Python Files and Create Necessary Folders
 RUN echo "Convert Jupyter Notebooks to Python Files and Create Necessary Folders"
