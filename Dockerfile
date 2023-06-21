@@ -49,8 +49,7 @@ RUN ls -ltr /opt/conda/envs/lume-live-dev/bin/ | grep "Impact"
 
 # Activate Conda environment and check if it is working properly
 RUN echo "Making sure Key Packages are installed correctly..."
-RUN python -c "import impact"
-RUN echo ${PYTHONPATH}
+RUN conda run -n lume-live-dev python -c "import impact"
 
 SHELL ["mkdir", "-p", "/app/archive"]
 SHELL ["mkdir", "-p", "/app/output"]
