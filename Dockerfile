@@ -4,8 +4,7 @@ FROM continuumio/miniconda3
 
 # Create Conda environment from the YAML filei
 RUN git clone https://github.com/singh96aman/lume-impact-live-demo.git
-WORKDIR lume-impact-live-demo
-RUN conda env create -f lume-live-dev.yml   
+RUN conda env create -f lume-impact-live-demo/lume-live-dev.yml   
 
 RUN apt-get update && apt install gfortran -y
 
@@ -46,13 +45,13 @@ RUN ls -ltr /opt/conda/envs/lume-live-dev/bin/ | grep "Impact"
 RUN echo "Making sure Key Packages are installed correctly..."
 RUN conda run -n lume-live-dev python -c "import impact"
 
-RUN mkdir -p /output/{archive,output,plot,snapshot,log,summary}
+RUN mkdir -p /lume-impact-live-demo/output/{archive,output,plot,snapshot,log,summary}
 
 #Convert Jupyter Notebooks to Python Files and Create Necessary Folders
 RUN echo "Convert Jupyter Notebooks to Python Files and Create Necessary Folders"
-RUN conda run -n lume-live-dev jupyter nbconvert --to script lume-impact-live-demo.ipynb
-RUN conda run -n lume-live-dev jupyter nbconvert --to script make_dashboard.ipynb
-RUN conda run -n lume-live-dev jupyter nbconvert --to script get_vcc_image.ipynb
+RUN conda run -n lume-live-dev jupyter nbconvert --to script lume-impact-live-demo/lume-impact-live-demo.ipynb \
+ && conda run -n lume-live-dev jupyter nbconvert --to script lume-impact-live-demo/make_dashboard.ipynb \
+ && conda run -n lume-live-dev jupyter nbconvert --to script lume-impact-live-demo/get_vcc_image.ipynb \
 
 # Python program to run in the container
-ENTRYPOINT ["conda", "run", "-n", "lume-live-dev", "ipython", "lume-impact-live-demo.py", "--", "-t", "'singularity'"]
+ENTRYPOINT ["conda", "run", "-n", "lume-live-dev", "ipython", "lume-impact-live-demo/lume-impact-live-demo.py", "--", "-t", "'singularity'"]
