@@ -51,7 +51,7 @@ RUN mkdir -p /lume-impact-live-demo/output/{archive,output,plot,snapshot,log,sum
 RUN echo "Convert Jupyter Notebooks to Python Files and Create Necessary Folders"
 RUN conda run -n lume-live-dev jupyter nbconvert --to script lume-impact-live-demo/lume-impact-live-demo.ipynb \
  && conda run -n lume-live-dev jupyter nbconvert --to script lume-impact-live-demo/make_dashboard.ipynb \
- && conda run -n lume-live-dev jupyter nbconvert --to script lume-impact-live-demo/get_vcc_image.ipynb \
+ && conda run -n lume-live-dev jupyter nbconvert --to script lume-impact-live-demo/get_vcc_image.ipynb
 
 # Python program to run in the container
 ENTRYPOINT ["conda", "run", "-n", "lume-live-dev", "ipython", "lume-impact-live-demo/lume-impact-live-demo.py", "--", "-t", "'singularity'"]
