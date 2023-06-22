@@ -27,12 +27,6 @@ RUN cd IMPACT-T/src/ && /opt/conda/envs/lume-live-dev/bin/cmake -S . -B build -D
 
 RUN ls /usr/local/bin | grep "Impact"
 
-# Set working directory for the project
-WORKDIR /app/
-
-#Copy SourceCode
-COPY . /app/
-
 RUN echo "Installing Impact-T seperately"
 ENV PATH="$PATH:/opt/conda/bin"
 
@@ -51,18 +45,19 @@ RUN ls -ltr /opt/conda/envs/lume-live-dev/bin/ | grep "Impact"
 RUN echo "Making sure Key Packages are installed correctly..."
 RUN conda run -n lume-live-dev python -c "import impact"
 
-SHELL ["mkdir", "-p", "/app/archive"]
-SHELL ["mkdir", "-p", "/app/output"]
-SHELL ["mkdir", "-p", "/app/plot"]
-SHELL ["mkdir", "-p", "/app/snapshot"]
-SHELL ["mkdir", "-p", "/app/log"]
-SHELL ["mkdir", "-p", "/app/summary"]
+RUN mkdir -p /app/output/{archive,output,plot,snapshot,log,summary}
 
 #Convert Jupyter Notebooks to Python Files and Create Necessary Folders
 RUN echo "Convert Jupyter Notebooks to Python Files and Create Necessary Folders"
-RUN conda run -n lume-live-dev jupyter nbconvert --to script /app/lume-impact-live-demo.ipynb
-RUN conda run -n lume-live-dev jupyter nbconvert --to script /app/make_dashboard.ipynb
-RUN conda run -n lume-live-dev jupyter nbconvert --to script /app/get_vcc_image.ipynb
+RUN conda run -n lume-live-dev jupyter nbconvert --to script lume-impact-live-demo.ipynb
+RUN conda run -n lume-live-dev jupyter nbconvert --to script make_dashboard.ipynb
+RUN conda run -n lume-live-dev jupyter nbconvert --to script get_vcc_image.ipynb
+
+# Set working directory for the project
+WORKDIR /app/
+
+#Copy SourceCode
+COPY . /app/
 
 # Python program to run in the container
 ENTRYPOINT ["conda", "run", "-n", "lume-live-dev", "ipython", "/app/lume-impact-live-demo.py", "--", "-t", "'singularity'"]
