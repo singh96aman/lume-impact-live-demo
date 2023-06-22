@@ -48,7 +48,7 @@ RUN ls -ltr /opt/conda/envs/lume-live-dev/bin/ | grep "Impact"
 RUN echo "Making sure Key Packages are installed correctly..."
 RUN conda run -n lume-live-dev python -c "import impact"
 
-RUN mkdir -p /lume-impact-live-demo/output/{archive,output,plot,snapshot,log,summary}
+RUN mkdir -p /app/lume-impact-live-demo/output/{archive,output,plot,snapshot,log,summary}
 
 #Convert Jupyter Notebooks to Python Files and Create Necessary Folders
 RUN echo "Convert Jupyter Notebooks to Python Files and Create Necessary Folders"
