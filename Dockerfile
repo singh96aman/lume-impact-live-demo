@@ -5,8 +5,12 @@ FROM continuumio/miniconda3
 RUN mkdir /app/
 
 # Create Conda environment from the YAML filei
-RUN git clone https://github.com/singh96aman/lume-impact-live-demo.git /app/
+COPY . /app/
+
+RUN ls /app/
+
 WORKDIR /app/
+
 RUN conda env create -f lume-live-dev.yml   
 
 RUN apt-get update && apt install gfortran -y
