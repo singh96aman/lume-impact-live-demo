@@ -3,7 +3,7 @@
 FROM continuumio/miniconda3
 
 # Create Conda environment from the YAML filei
-RUN git clone https://github.com/ChristopherMayes/lume-impact-live-demo.git
+RUN git clone https://github.com/singh96aman/lume-impact-live-demo.git
 WORKDIR lume-impact-live-demo
 RUN conda env create -f lume-live-dev.yml   
 
