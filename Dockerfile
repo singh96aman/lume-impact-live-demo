@@ -2,8 +2,11 @@
 #FROM centos:centos7
 FROM continuumio/miniconda3
 
+RUN mkdir /app/
+
 # Create Conda environment from the YAML filei
-RUN git clone https://github.com/singh96aman/lume-impact-live-demo.git
+RUN git clone https://github.com/singh96aman/lume-impact-live-demo.git /app/
+WORKDIR /app/
 RUN conda env create -f lume-impact-live-demo/lume-live-dev.yml   
 
 RUN apt-get update && apt install gfortran -y
@@ -54,4 +57,4 @@ RUN conda run -n lume-live-dev jupyter nbconvert --to script lume-impact-live-de
  && conda run -n lume-live-dev jupyter nbconvert --to script lume-impact-live-demo/get_vcc_image.ipynb
 
 # Python program to run in the container
-ENTRYPOINT ["conda", "run", "-n", "lume-live-dev", "ipython", "lume-impact-live-demo/lume-impact-live-demo.py", "--", "-t", "'singularity'"]
+ENTRYPOINT ["conda", "run", "-n", "lume-live-dev", "ipython", "/app/lume-impact-live-demo/lume-impact-live-demo.py", "--", "-t", "'singularity'"]
