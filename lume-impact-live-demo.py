@@ -77,14 +77,24 @@ parser.add_argument("-t", "--host", help = "Mention the host", default = "singul
 parser.add_argument("-p", "--num_procs", help = "Mention the Num Procs", default = 64)
 
 
+# In[ ]:
+
+
+def convertStringToBoolean(argument):
+    if argument == 'True' or argument == 'true' or argument == True:
+        return True
+    else:
+        return False
+
+
 # In[52]:
 
 
 args = vars(parser.parse_args())
 
-DEBUG = args['debug']
-USE_VCC = args['use_vcc']
-LIVE = args['live']
+DEBUG = convertStringToBoolean(args['debug'])
+USE_VCC = convertStringToBoolean(args['use_vcc'])
+LIVE = convertStringToBoolean(args['live'])
 MODEL = args['model']
 HOST = args['host']
 NUM_PROCS_ARGS = int(args['num_procs'])
@@ -348,9 +358,11 @@ logger.info(f'FINAL SETTINGS - {SETTINGS0}')
 DF = pd.read_csv(CSV)#.dropna()
 
 PVLIST = list(DF['device_pv_name'].dropna()) 
+
 if USE_VCC:
     PVLIST = PVLIST + list(VCC_DEVICE_PV[VCC_DEVICE].values())
-
+else:
+    logger.info('USE VCC set to False. VCC is not working right now.')
 #DF.set_index('device_pv_name', inplace=True)
 DF
 
@@ -383,26 +395,40 @@ def get_snapshot(snapshot_file=None):
     if len(epics_working_check) == len(list(pvdata.keys())):
         raise Exception(f'EPICS returned None for all keys. Please check if you are able to connect to Accelerator')
 
+    VCC_Key = None
+    
     for k, v in pvdata.items():
         
         if v is None:
             raise ValueError(f'EPICS get for {k} returned None')
         
         if ':IMAGE:ARRAYDATA' in k.upper():
+            VCC_Key = k
             found = False
             logger.info(f'Waiting for good {k}')
-            while not found:
+            counter = 0
+            USE_VCC_LOCAL = True
+            while not found and counter < 5:
+                counter += 1
                 if v is None:
                     continue
                 if v.std() > 10:
                     found = True
                 else:
                     v = MONITOR[k].get()
-            if v.ptp() < 128:
+            if counter == 5:
+                logger.info(f'VCC is not working. Defaulting to None.')
+                USE_VCC_LOCAL = False
+            elif v.ptp() < 128:
                 v = v.astype(np.int8) # Downcast preemptively 
-                                
             pvdata[k] = v
-    return pvdata, itime
+        else:
+            USE_VCC_LOCAL = False
+
+    if not USE_VCC_LOCAL:
+        del pvdata[VCC_Key]
+
+    return pvdata, itime, USE_VCC_LOCAL
 
 
 # # EPICS -> Simulation settings
@@ -420,7 +446,7 @@ def get_settings(csv, base_settings={}, snapshot_dir=None, snapshot_file=None):
     
     pv_names = list(df['device_pv_name'])
 
-    pvdata, itime = get_snapshot(snapshot_file)
+    pvdata, itime, USE_VCC_LOCAL = get_snapshot(snapshot_file)
     
     df['pv_value'] = [pvdata[k] for k in pv_names]
     
@@ -439,7 +465,8 @@ def get_settings(csv, base_settings={}, snapshot_dir=None, snapshot_file=None):
         settings['total_charge'] = 1 # Will be updated with particles
 
     # VCC image
-    if USE_VCC:
+    if USE_VCC_LOCAL:
+        logger.info('Getting VCC Live Distgen')
         dfile, img, cutimg = get_live_distgen_xy_dist(filename=DISTGEN_LASER_FILE, vcc_device=VCC_DEVICE, pvdata=pvdata)  
         settings['distgen:xy_dist:file'] = dfile
     else:
@@ -560,16 +587,16 @@ def run1():
 
 if __name__ == '__main__':
     while True:
-        #try:
-        result = run1()
-        # except Exception as e:
-        #     logger.info(e)
-        #     if (e.__class__.__name__ == 'Exception'):
-        #         logger.info('Stopping the Program')
-        #         break
-        #     else:
-        #         logger.info('Something BAD happened. Sleeping for 10 s ...')      
-        #         sleep(10)
+        try:
+            result = run1()
+        except Exception as e:
+            logger.info(e)
+            if (e.__class__.__name__ == 'Exception'):
+                logger.info('Stopping the Program')
+                break
+            else:
+                logger.info('Something BAD happened. Sleeping for 10 s ...')      
+                sleep(10)
             
 
 
