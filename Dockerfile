@@ -62,5 +62,19 @@ RUN conda run -n lume-live-dev jupyter nbconvert --to script lume-impact-live-de
  && conda run -n lume-live-dev jupyter nbconvert --to script make_dashboard.ipynb \
  && conda run -n lume-live-dev jupyter nbconvert --to script get_vcc_image.ipynb
 
+# Setup our EPICS environment to be able to read PROD variables
+ENV EPICS_PVA_SERVER_PORT 5075
+ENV EPICS_PVA_BROADCAST_PORT 5076
+ENV EPICS_PVA_AUTO_ADDR_LIST FALSE
+ENV EPICS_PVA_ADDR_LIST "lcls-prod01:5068"
+ENV EPICS_PVA_ADDR_LIST "${EPICS_PVA_ADDR_LIST} lcls-prod01:5063"
+ENV EPICS_PVA_ADDR_LIST "${EPICS_PVA_ADDR_LIST} mcc-dmz mccas0.slac.stanford.edu"
+ENV EPICS_CA_AUTO_ADDR_LIST NO
+ENV EPICS_CA_ADDR_LIST "lcls-prod01:5068 lcls-prod01:5063 mcc-dmz"
+ENV EPICS_CA_REPEATER_PORT "5069"
+ENV EPICS_CA_SERVER_PORT "5068"
+ENV EPICS_TS_NTP_INET "134.79.48.11"
+ENV EPICS_IOC_LOG_INET "134.79.151.21"
+
 # Python program to run in the container
 #ENTRYPOINT ["conda", "run", "-n", "lume-live-dev", "ipython", "/app/lume-impact-live-demo.py", "--", "-t", "'singularity'"]
