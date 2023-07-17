@@ -26,7 +26,7 @@ RUN source ~/.bashrc \
 
 RUN apt install make 
 
-RUN RUN export PATH="/opt/conda/bin/:$PATH"
+RUN export PATH="/opt/conda/bin/:$PATH"
 
 RUN git clone https://github.com/impact-lbl/IMPACT-T.git
 
