@@ -13,6 +13,8 @@ WORKDIR /app/
 
 RUN conda env create -f lume-live-dev.yml   
 
+RUN export PATH="/opt/conda/bin/:$PATH"
+
 RUN apt-get update && apt install gfortran -y
 
 # Override default shell and use bash:
@@ -22,11 +24,10 @@ RUN source ~/.bashrc \
     && source /opt/conda/etc/profile.d/conda.sh \
     && /opt/conda/bin/activate && conda init bash \ 
     && conda activate lume-live-dev \
-    && conda install -c conda-forge impact-t=*=mpi_openmpi*
+    && conda install -c conda-forge impact-t=*=mpi_openmpi* \
+    && echo "conda activate lume-live-dev" > ~/.bashrc
 
 RUN apt install make 
-
-RUN export PATH="/opt/conda/bin/:$PATH"
 
 RUN git clone https://github.com/impact-lbl/IMPACT-T.git
 
