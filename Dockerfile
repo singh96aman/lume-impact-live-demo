@@ -26,6 +26,8 @@ RUN source ~/.bashrc \
 
 RUN apt install make 
 
+RUN RUN export PATH="/opt/conda/bin/:$PATH"
+
 RUN git clone https://github.com/impact-lbl/IMPACT-T.git
 
 RUN cd IMPACT-T/src/ && /opt/conda/envs/lume-live-dev/bin/cmake -S . -B build -DUSE_MPI=ON \
