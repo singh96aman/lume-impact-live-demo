@@ -13,7 +13,7 @@ WORKDIR /app/
 
 RUN conda env create -f lume-live-dev.yml   
 
-RUN export PATH="/opt/conda/bin/:$PATH"
+RUN export PATH="/opt/conda/bin/:/opt/slurm/slurm-curr/bin/:$PATH"
 
 RUN apt-get update && apt install gfortran -y
 
