@@ -11,12 +11,6 @@
 print("Running LUME IMPACT SERVICE.....")
 
 
-# In[ ]:
-
-
-
-
-
 # In[47]:
 
 
@@ -76,49 +70,28 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-d", "--debug", help = "Debug Mode", default = False)
-parser.add_argument("-v", "--use_vcc", help = "Use VCC - True When VCC is Active", default = False)
-parser.add_argument("-l", "--live", help = "Live Mode -  True When BEAM is Active", default = False)
+parser.add_argument("-v", "--use_vcc", help = "Use VCC - True When VCC is Active", default = True)
+parser.add_argument("-l", "--live", help = "Live Mode -  True When BEAM is Active", default = True)
 parser.add_argument("-m", "--model", help = "Mention the Injector Model", default = "sc_inj")
 parser.add_argument("-t", "--host", help = "Mention the host", default = "singularity")
 parser.add_argument("-p", "--num_procs", help = "Mention the Num Procs", default = 64)
 
 
-# In[51]:
-
-
-def convertArgFromStringToBool(value):
-    if isinstance(value, str):
-        if value == 'True' or value == 'true':
-            return True
-        else:
-            return False
-
-
 # In[52]:
 
 
-args, unknown = parser.parse_known_args()
+args = vars(parser.parse_args())
 
-DEBUG = convertArgFromStringToBool(args.debug)
-USE_VCC = convertArgFromStringToBool(args.use_vcc)
-LIVE = convertArgFromStringToBool(args.live)
-MODEL = args.model
-HOST = args.host
-NUM_PROCS_ARGS = int(args.num_procs)
-print('Setting NUM PROCS')
+DEBUG = args['debug']
+USE_VCC = args['use_vcc']
+LIVE = args['live']
+MODEL = args['model']
+HOST = args['host']
+NUM_PROCS_ARGS = int(args['num_procs'])
 
 SNAPSHOT = 'examples/sc_inj-snapshot-2022-11-12T12:38:08-08:00.h5'
 MIN_CHARGE_pC = 10
-
-print('Starting LUME LIVE SERVICE with Arguments - ', args)
-
-
-# In[53]:
-
-
 config = toml.load(f"configs/{HOST}_{MODEL}.toml")
-print('Config TOML Loaded -')
-print(config)
 PREFIX = f'lume-impact-live-demo-{HOST}-{MODEL}'
 
 
@@ -135,8 +108,9 @@ logger = logging.getLogger(PREFIX)
 # set log level
 logger.setLevel(logging.INFO)
 
+LOG_OUTPUT_DIR = config.get("log_output_dir")
 # define file handler and set formatter
-file_handler = logging.FileHandler(f'log/{PREFIX}.log')
+file_handler = logging.FileHandler(f'{LOG_OUTPUT_DIR}/{PREFIX}.log', mode='a', encoding=None, delay=False)
 formatter    = logging.Formatter(fmt="%(asctime)s :  %(name)s : %(message)s ", datefmt="%Y-%m-%dT%H:%M:%S%z")
 
 # Add print to stdout
@@ -146,6 +120,21 @@ file_handler.setFormatter(formatter)
 
 # add file handler to logger
 logger.addHandler(file_handler)
+
+
+# In[ ]:
+
+
+#Arguments -
+
+logger.info('Start of Script Marker - Script Running with Arguments - ')
+logger.info(f'Debug - {DEBUG}')
+logger.info(f'USE_VCC - {USE_VCC}')
+logger.info(f'LIVE - {LIVE}')
+logger.info(f'MODEL - {MODEL}')
+logger.info(f'HOST - {HOST}')
+logger.info(f'NUM_PROCS_ARGS - {NUM_PROCS_ARGS}')
+logger.info(f'Config TOML Loaded - {config}')
 
 
 # ## Utils
@@ -175,8 +164,6 @@ def load_pvdata(filename):
             pvdata[k] = v
             
     return pvdata, isotime
-# save_pvdata('test.h5', PVDATA, isotime()) 
-# load_pvdata('test.h5')
 
 
 # # Configuration
@@ -205,9 +192,7 @@ def get_path(key):
 # Output dirs
 
 SUMMARY_OUTPUT_DIR = get_path('summary_output_dir')
-
 ARCHIVE_DIR = get_path('archive_dir')
-
 SNAPSHOT_DIR = get_path('snapshot_dir')
 
 # Dummy file for distgen
@@ -224,8 +209,6 @@ else:
 
 if NUM_PROCS_ARGS != NUM_PROCS:
     NUM_PROCS = NUM_PROCS_ARGS
-
-print('NUMBER OF PROCS USED IS - ', NUM_PROCS)
 
 # if using sdf:
 if HOST == 'sdf':    
@@ -253,24 +236,16 @@ SETTINGS0 = {
  'header:Nx': 32,
  'header:Ny': 32,
  'header:Nz': 32,
- #'header:Nprow' : 64,
- #'header:Npcol' : 1
  'numprocs': NUM_PROCS,
-# 'mpi_run': MPI_RUN_CMD
    }
 
 SETTINGS0['numprocs'] = NUM_PROCS
 CONFIG0["workdir"] = get_path('workdir')
 
-print('DEBUGGING...', DEBUG)
-
 if DEBUG:
     logger.info('DEBUG MODE: Running without space charge for speed. ')
     SETTINGS0['distgen:n_particle'] = 1000
     SETTINGS0['total_charge'] = 0
-    
-    
-
     
 # Host config    
 if HOST in ('sdf'):
@@ -290,26 +265,16 @@ else:
 
 # # Select: LCLS or FACET
 
-# In[58]:
-
-
-os.environ["LCLS_LATTICE"]="/sdf/group/ard/thakur12/lcls-lattice"
-
-
 # In[59]:
 
 
 # PV -> Sim conversion table
 CSV =  f'pv_mapping/{MODEL}_impact.csv'  
 
-
 CONFIG0['impact_config']      =  get_path('config_file')
 CONFIG0['distgen_input_file'] =  get_path('distgen_input_file')
 
 PLOT_OUTPUT_DIR = get_path('plot_output_dir')
-
-
-
 
 if MODEL == 'cu_inj':
     VCC_DEVICE = 'CAMR:IN20:186' # LCLS   
@@ -364,7 +329,7 @@ else:
 
 
 CONFIG0, SETTINGS0
-print('FINAL SETTING - ', SETTINGS0)
+logger.info(f'FINAL SETTINGS - {SETTINGS0}')
 
 
 # # Set up monitors
@@ -408,12 +373,16 @@ def get_snapshot(snapshot_file=None):
         itime = isotime()
         pvdata =  {k:MONITOR[k].get() for k in MONITOR}
     else:
-        print(snapshot_file)
         pvdata, itime = load_pvdata(snapshot_file)
         itime = itime.decode('utf-8')
     
     logger.info(f'Acquired settings from EPICS at: {itime}')
     
+    epics_working_check = [val for val in pvdata.values() if val is None]
+    
+    if len(epics_working_check) == len(list(pvdata.keys())):
+        raise Exception(f'EPICS returned None for all keys. Please check if you are able to connect to Accelerator')
+
     for k, v in pvdata.items():
         
         if v is None:
@@ -434,15 +403,6 @@ def get_snapshot(snapshot_file=None):
                                 
             pvdata[k] = v
     return pvdata, itime
-# PVDATA, ITIME = get_snapshot(SNAPSHOT)
-# PVDATA, ITIME
-
-
-# In[65]:
-
-
-#while True:
-#    get_pvdata()
 
 
 # # EPICS -> Simulation settings
@@ -497,30 +457,6 @@ def get_settings(csv, base_settings={}, snapshot_dir=None, snapshot_file=None):
         
         
     return settings, df, img, cutimg, itime
-
-#res = get_settings(CSV, SETTINGS0, snapshot_dir='.')
-# res[1]
-
-
-# In[67]:
-
-
-#get_settings(CSV, SETTINGS0, snapshot_dir='.', snapshot_file=SNAPSHOT)
-
-
-# In[68]:
-
-
-# gfile = CONFIG0['distgen_input_file']
-# from distgen import Generator
-# #fout = res[0]
-# G = Generator(gfile)
-# #G['xy_dist:file'] =  DISTGEN_LASER_FILE #'distgen_laser.txt'
-# if USE_VCC:
-#     G['xy_dist:file'] = res[0]['distgen:xy_dist:file'] 
-# G['n_particle'] = 100000
-# G.run()
-# G.particles.plot('x', 'y', figsize=(5,5))
 
 
 # In[69]:
@@ -616,49 +552,6 @@ def run1():
     
 
 
-# In[72]:
-
-
-# %%time
-# result = run1()
-
-
-# In[73]:
-
-
-#result.keys()
-
-
-# In[74]:
-
-
-# Basic config
-#result['config']
-
-
-# In[75]:
-
-
-# Simulation inputs
-#result['inputs']
-
-
-# In[76]:
-
-
-# Simulation outputs
-# result['outputs']
-
-
-# # Show the plot 
-
-# In[77]:
-
-
-# from IPython.display import Image
-# Image(filename=result['outputs']['plot_file'])
-
-
 # # loop it
 # 
 
@@ -666,14 +559,18 @@ def run1():
 
 
 if __name__ == '__main__':
-    #while True:
+    while True:
         #try:
-            os.environ['LCLS_LATTICE'] = '/sdf/group/ard/thakur12/lcls-lattice'
-            os.environ['SCRATCH'] = '/scratch/t/thakur12'
-            result = run1()
-        #except:
-        #    sleep(10)
-        #    logger.info('Something BAD happened. Sleeping for 10 s ...')
+        result = run1()
+        # except Exception as e:
+        #     logger.info(e)
+        #     if (e.__class__.__name__ == 'Exception'):
+        #         logger.info('Stopping the Program')
+        #         break
+        #     else:
+        #         logger.info('Something BAD happened. Sleeping for 10 s ...')      
+        #         sleep(10)
+            
 
 
 # In[ ]:
