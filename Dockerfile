@@ -25,7 +25,9 @@ RUN source ~/.bashrc \
     && /opt/conda/bin/activate && conda init bash \ 
     && conda activate lume-live-dev \
     && conda install -c conda-forge impact-t=*=mpi_openmpi* \
-    && echo "conda activate lume-live-dev" > ~/.bashrc
+    && echo "conda activate lume-live-dev" > ~/.bashrc \
+    && echo "echo \"Hello World\"" >>  ~/.bashrc \
+    && conda clean -a
 
 RUN apt install make 
 
@@ -76,6 +78,11 @@ ENV EPICS_CA_REPEATER_PORT "5069"
 ENV EPICS_CA_SERVER_PORT "5068"
 ENV EPICS_TS_NTP_INET "134.79.48.11"
 ENV EPICS_IOC_LOG_INET "134.79.151.21"
+
+CMD ["/bin/bash"]
+ENV BASH_ENV ~/.bashrc
+
+
 
 # Python program to run in the container
 #ENTRYPOINT ["conda", "run", "-n", "lume-live-dev", "ipython", "/app/lume-impact-live-demo.py", "--", "-t", "'singularity'"]

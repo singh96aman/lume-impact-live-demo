@@ -425,7 +425,7 @@ def get_snapshot(snapshot_file=None):
         else:
             USE_VCC_LOCAL = False
 
-    if not USE_VCC_LOCAL:
+    if not USE_VCC_LOCAL and VCC_Key in pvdata:
         del pvdata[VCC_Key]
 
     return pvdata, itime, USE_VCC_LOCAL
@@ -587,16 +587,16 @@ def run1():
 
 if __name__ == '__main__':
     while True:
-        try:
-            result = run1()
-        except Exception as e:
-            logger.info(e)
-            if (e.__class__.__name__ == 'Exception'):
-                logger.info('Stopping the Program')
-                break
-            else:
-                logger.info('Something BAD happened. Sleeping for 10 s ...')      
-                sleep(10)
+        # try:
+        result = run1()
+        # except Exception as e:
+        #     logger.info(e)
+        #     if (e.__class__.__name__ == 'Exception'):
+        #         logger.info('Stopping the Program')
+        #         break
+        #     else:
+        #         logger.info('Something BAD happened. Sleeping for 10 s ...')      
+        #         sleep(10)
             
 
 
