@@ -40,7 +40,6 @@ RUN cd IMPACT-T/src/ && /opt/conda/envs/lume-live-dev/bin/cmake -S . -B build -D
 RUN ls /usr/local/bin | grep "Impact"
 
 RUN echo "Installing Impact-T seperately"
-ENV PATH="$PATH:/opt/conda/bin"
 
 RUN ls -a /root/
 
@@ -78,9 +77,6 @@ ENV EPICS_CA_REPEATER_PORT "5069"
 ENV EPICS_CA_SERVER_PORT "5068"
 ENV EPICS_TS_NTP_INET "134.79.48.11"
 ENV EPICS_IOC_LOG_INET "134.79.151.21"
-
-CMD ["/bin/bash"]
-ENV BASH_ENV ~/.bashrc
 
 
 
