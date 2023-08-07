@@ -50,6 +50,7 @@ import sys
 import os
 import toml
 from time import sleep, time
+import datetime
 
 
 import matplotlib.pyplot as plt
@@ -105,12 +106,27 @@ config = toml.load(f"configs/{HOST}_{MODEL}.toml")
 PREFIX = f'lume-impact-live-demo-{HOST}-{MODEL}'
 
 
+# In[ ]:
+
+
+def convertToDatedFormat(destionation_folder):
+    curr_date = datetime.date.today()
+    year,month,day = curr_date.strftime('%Y'),curr_date.strftime('%m'),curr_date.strftime('%d')
+    destionation_folder_dated = destionation_folder + "/" + year + "/" + month + "/" + day
+
+    if not os.path.exists(destionation_folder_dated):
+        os.makedirs(destionation_folder_dated)
+    
+    return destionation_folder_dated
+
+
 # ## Logging
 
 # In[54]:
 
 
 import logging
+from logging.handlers import RotatingFileHandler
 
 # Gets or creates a logger
 logger = logging.getLogger(PREFIX)  
@@ -120,7 +136,8 @@ logger.setLevel(logging.INFO)
 
 LOG_OUTPUT_DIR = config.get("log_output_dir")
 # define file handler and set formatter
-file_handler = logging.FileHandler(f'{LOG_OUTPUT_DIR}/{PREFIX}.log', mode='a', encoding=None, delay=False)
+file_handler = RotatingFileHandler(f'{LOG_OUTPUT_DIR}/{PREFIX}.log', mode='a', encoding=None, maxBytes=50*1024*1024, 
+                                 backupCount=2, delay=0)
 formatter    = logging.Formatter(fmt="%(asctime)s :  %(name)s : %(message)s ", datefmt="%Y-%m-%dT%H:%M:%S%z")
 
 # Add print to stdout
@@ -519,6 +536,11 @@ if DO_TIMING:
 def my_merit(impact_object, itime):
     # Collect standard output statistics
     merit0 = default_impact_merit(impact_object)
+    
+    PLOT_OUTPUT_DIR_DATED = convertToDatedFormat(PLOT_OUTPUT_DIR)
+    #Overriding at runtime to save in dated folders
+    DASHBOARD_KWARGS["outpath"] = PLOT_OUTPUT_DIR_DATED
+    
     # Make the dashboard from the evaluated object
     plot_file = make_dashboard(impact_object, itime=itime, **DASHBOARD_KWARGS)
     #print('Dashboard written:', plot_file)
@@ -542,11 +564,15 @@ def my_merit(impact_object, itime):
 
 def run1():
     dat = {}
-    
+
+    SNAPSHOT_DIR_DATED = convertToDatedFormat(SNAPSHOT_DIR)
+    ARCHIVE_DIR_DATED = convertToDatedFormat(ARCHIVE_DIR)
+    SUMMARY_OUTPUT_DIR_DATED = convertToDatedFormat(SUMMARY_OUTPUT_DIR)
+        
     # Acquire settings
     mysettings, df, img, cutimg, itime = get_settings(CSV,
                                                            SETTINGS0,
-                                                           snapshot_dir=SNAPSHOT_DIR,
+                                                           snapshot_dir=SNAPSHOT_DIR_DATED,
                                                           snapshot_file=SNAPSHOT)        
     dat['isotime'] = itime
     
@@ -566,12 +592,12 @@ def run1():
     
     outputs = evaluate_impact_with_distgen(mysettings,
                                        merit_f=lambda x: my_merit(x, itime),
-                                       archive_path=ARCHIVE_DIR,
+                                       archive_path=ARCHIVE_DIR_DATED,
                                        **CONFIG0, verbose=True )
     
     dat['outputs'] =  outputs   
     logger.info(f'...finished in {(time()-t0)/60:.1f} min')
-    fname = fname=f'{SUMMARY_OUTPUT_DIR}/{PREFIX}-{itime}.json'
+    fname = fname=f'{SUMMARY_OUTPUT_DIR_DATED}/{PREFIX}-{itime}.json'
 
     json.dump(dat, open(fname, 'w'), cls=NpEncoder)
     logger.info(f'Summary output written: {fname}')
